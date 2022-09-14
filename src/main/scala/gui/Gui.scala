@@ -20,7 +20,7 @@
 
 package gui
 
-import engine.{ChoiceSelected, Clockwise, Counterclockwise, Engine, MoveAborted, MoveDirection, OptionGroupSelected}
+import engine.{ChoiceSelected, Clockwise, Counterclockwise, Engine, MoveAborted, MoveDirection, ChoiceGroupSelected}
 import scalafx.stage.Screen
 import scalafx.scene.transform.{Rotate, Translate}
 import scalafx.scene.image.{Image, ImageView}
@@ -49,7 +49,6 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
   private val ActiveCircleColor: Color = Color.rgb(255, 102, 0)
   private val InactiveCircleColor: Color = Color.rgb(0,82,70)
   private val BlockColor: Color = Color.rgb(76,128,118)
-  private val LabelBackgroundColor: Color = Color.rgb(0, 32, 27)
 
   private val BlockSize = 200
   private val CircleRadius = 50
@@ -57,14 +56,14 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
   private val LabelMargin = 15
   private val LabelGridGap = 25
   private val LabelMaxChars = 6
-  private val OptionGroupsOpacity = 0.35
+  private val ChoiceGroupsOpacity = 0.35
   private val ArrowsImagePath = "resources/images/arrows.png"
   private val LogoImagePath = "resources/images/alt-logo.png"
 
   private var BlockList: IndexedSeq[Node] = null
   private var MainButton: Circle = null
-  private var OptionGroups: Group = null
-  private var OptionsOfSelectedGroup: List[Label] = null
+  private var ChoiceGroups: Group = null
+  private var ChoicesOfSelectedGroup: List[Label] = null
   private var ListVerBoxes: ListBuffer[VBox] = null
   private var ListHorBoxes: ListBuffer[HBox] = null
   private var ArrowsImage: Option[ImageView] = None
@@ -124,13 +123,13 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
       add(BlockList(3), 0, 1)
     })
 
-    // Create layer for options in selected group
-    OptionGroups = new Group(createOptionGroupsGrid())
-    OptionGroups.setMouseTransparent(true)
+    // Create layer for choice groups
+    ChoiceGroups = new Group(createChoiceGroupsGrid())
+    ChoiceGroups.setMouseTransparent(true)
 
-    // Create layer for option groups
-    val selectedOptionsGrid = new Group(createSelectedOptionGroupGrid())
-    selectedOptionsGrid.setMouseTransparent(true)
+    // Create layer for available choices in selected group
+    val selectedChoicesGrid = new Group(createGridForSelectedChoiceGroup())
+    selectedChoicesGrid.setMouseTransparent(true)
 
     // Create layer for direction indicators
     ArrowsImage = Option(new ImageView(new Image(new File(ArrowsImagePath).toURI.toString)))
@@ -139,19 +138,19 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
 
     // Add layers to stack pane
     stackPane.children += blocks
-    stackPane.children += OptionGroups
-    stackPane.children += selectedOptionsGrid
+    stackPane.children += ChoiceGroups
+    stackPane.children += selectedChoicesGrid
     stackPane.children += new Group(ArrowsImage.get)
     stackPane.children += MainButton
 
     // Set alignment of layers inside stack pane
-    StackPane.setAlignment(OptionGroups, Pos.Center)
-    StackPane.setAlignment(selectedOptionsGrid, Pos.Center)
+    StackPane.setAlignment(ChoiceGroups, Pos.Center)
+    StackPane.setAlignment(selectedChoicesGrid, Pos.Center)
 
     stackPane
   }
 
-  private def createOptionGroupsGrid(): GridPane = {
+  private def createChoiceGroupsGrid(): GridPane = {
     ListVerBoxes = ListBuffer[VBox]()
     ListHorBoxes = ListBuffer[HBox]()
 
@@ -176,7 +175,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
         else ListVerBoxes(from - 1)
 
         for (to <- 1 to numOfBlocks) {
-          val lblText = ellipsisIfNecessary(engine.options(from, to, direction))
+          val lblText = ellipsisIfNecessary(engine.choices(from, to, direction))
           val lbl = new Label(lblText)
 
           lbl.setWrapText(true)
@@ -184,7 +183,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
 
           lbl.style = s"-fx-text-fill: #c4fcf0; -fx-padding: 1"
 
-          // Align option text closer to the edge of the box
+          // Align choice text closer to the edge of the box
           lbl.alignment = Pos.Center /*(from, orient) match {
             case (i, Vertical) if i == 1 || i == 4 => Pos.CenterRight
             case (i, Vertical) if i == 2 || i == 3 => Pos.CenterLeft
@@ -262,9 +261,9 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     grid
   }
 
-  private def createSelectedOptionGroupGrid(): GridPane = {
-    OptionsOfSelectedGroup = List(new Label, new Label, new Label, new Label)
-    OptionsOfSelectedGroup.foreach(o => {
+  private def createGridForSelectedChoiceGroup(): GridPane = {
+    ChoicesOfSelectedGroup = List(new Label, new Label, new Label, new Label)
+    ChoicesOfSelectedGroup.foreach(o => {
       o.setFont(new Font(28))
       o.effect = new DropShadow(2, 3, 3, Color.Black)
       o.alignmentInParent = Pos.Center
@@ -272,10 +271,10 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     })
 
     val grid = new GridPane {
-      add(OptionsOfSelectedGroup(0), 0, 0)
-      add(OptionsOfSelectedGroup(1), 1, 0)
-      add(OptionsOfSelectedGroup(2), 1, 1)
-      add(OptionsOfSelectedGroup(3), 0, 1)
+      add(ChoicesOfSelectedGroup(0), 0, 0)
+      add(ChoicesOfSelectedGroup(1), 1, 0)
+      add(ChoicesOfSelectedGroup(2), 1, 1)
+      add(ChoicesOfSelectedGroup(3), 0, 1)
 
       /// Add offset to avoid overlapping with the circle
       hgap = 2.5 * CircleRadius
@@ -308,8 +307,8 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
 
     outcome match {
       case MoveAborted => valid = false
-      case OptionGroupSelected(from, direction) => {
-        OptionGroups.opacity = OptionGroupsOpacity
+      case ChoiceGroupSelected(from, direction) => {
+        ChoiceGroups.opacity = ChoiceGroupsOpacity
         ArrowsImage.get.visible = true
 
         // Rotate img if move is in oposite direction
@@ -320,18 +319,18 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
           CurrentDirection = direction
         }
 
-        OptionsOfSelectedGroup.foreach(c =>
+        ChoicesOfSelectedGroup.foreach(c =>
           c.style = s"-fx-background-color: #005246; -fx-text-fill: #c4fcf0; -fx-border-radius: 5"
         )
 
-        // Set text in option labels to help user when picking
-        val optionGroupPane = if getGroupOrientation(from, direction) == Horizontal
+        // Set text in auxiliary choice labels to help user when picking
+        val choiceGroupPane = if getGroupOrientation(from, direction) == Horizontal
           then ListHorBoxes(from - 1)
           else ListVerBoxes(from - 1)
 
-        val optionsFromPane: List[JLabel] = optionGroupPane.children.map(o=>o.asInstanceOf[JLabel]).toList
-        for (i <- OptionsOfSelectedGroup.indices) {
-          OptionsOfSelectedGroup(i).text = ellipsisIfNecessary(optionsFromPane(i).text.value, LabelMaxChars+11)
+        val auxiliaryChoiceLabels: List[JLabel] = choiceGroupPane.children.map(o=>o.asInstanceOf[JLabel]).toList
+        for (i <- ChoicesOfSelectedGroup.indices) {
+          ChoicesOfSelectedGroup(i).text = ellipsisIfNecessary(auxiliaryChoiceLabels(i).text.value, LabelMaxChars+11)
         }
       }
       case ChoiceSelected => resetPicking()
@@ -349,8 +348,8 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
   }
 
   private def resetPicking(): Unit = {
-    OptionGroups.opacity = 1
-    OptionsOfSelectedGroup.foreach(o => o.text = "")
+    ChoiceGroups.opacity = 1
+    ChoicesOfSelectedGroup.foreach(o => o.text = "")
     ArrowsImage.get.visible = false
   }
 

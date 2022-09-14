@@ -32,7 +32,7 @@ case object Counterclockwise extends MoveDirection
 
 sealed trait MoveAttemptOutcome
 case object BlockEntered extends MoveAttemptOutcome
-case class OptionGroupSelected(from: Int, direction: MoveDirection) extends MoveAttemptOutcome
+case class ChoiceGroupSelected(from: Int, direction: MoveDirection) extends MoveAttemptOutcome
 case object ChoiceSelected extends MoveAttemptOutcome
 case object MoveAborted extends MoveAttemptOutcome
 
@@ -58,7 +58,7 @@ class Engine {
     _isPicking = isPicking
   }
 
-  def options: ListMap[(Int, Int, MoveDirection), String] = ListMap(
+def choices: ListMap[(Int, Int, MoveDirection), String] = ListMap(
     (1, 1, Clockwise)->"a", (1, 2, Clockwise)->"b", (1, 3, Clockwise)->"c", (1, 4, Clockwise)->"d",
     (2, 1, Clockwise)->"e", (2, 2, Clockwise)->"f", (2, 3, Clockwise)->"g", (2, 4, Clockwise)->"i",
     (3, 1, Clockwise)->"j", (3, 2, Clockwise)->"k", (3, 3, Clockwise)->"l", (3, 4, Clockwise)->"m",
@@ -90,13 +90,13 @@ class Engine {
           case _ => Option(Counterclockwise)
         }
 
-        moveAttemptOutcome = OptionGroupSelected(currentIndex, moveDirection.get)
+        moveAttemptOutcome = ChoiceGroupSelected(currentIndex, moveDirection.get)
       }
       else if (index == 0) {
         choiceEndIndex = currentIndex
         println(s"$choiceStartIndex, $choiceEndIndex, ${moveDirection.get}")
 
-        val choice: String = options(choiceStartIndex, choiceEndIndex, moveDirection.get)
+        val choice: String = choices(choiceStartIndex, choiceEndIndex, moveDirection.get)
 
         choice match {
           case "space" => {
