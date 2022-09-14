@@ -100,6 +100,20 @@ class Engine {
 
         val choice = convertMoveToChoice(choiceStartIndex, choiceEndIndex, moveDirection.get)
 
+        processChoice(choice)
+        resetChoise()
+        moveAttemptOutcome = ChoiceSelected
+      }
+      previousIndex = currentIndex
+      currentIndex = index
+    }
+
+    println(s"\tmove is%s valid".format(if valid  then "" else " not"))
+
+    moveAttemptOutcome
+  }
+  
+  private def processChoice(choice: Choice): Unit = {
         choice.content match {
           case "space" => {
             robot.keyPress(KeyEvent.VK_SPACE)
@@ -125,17 +139,6 @@ class Engine {
             }
           }
         }
-
-        resetChoise()
-        moveAttemptOutcome = ChoiceSelected
-      }
-      previousIndex = currentIndex
-      currentIndex = index
-    }
-
-    println(s"\tmove is%s valid".format(if valid  then "" else " not"))
-
-    moveAttemptOutcome
   }
 
   private def loadMainChoice(): Choice = {
