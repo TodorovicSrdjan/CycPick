@@ -58,7 +58,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
   private val LabelMaxChars = 6
   private val ChoiceGroupsOpacity = 0.35
   private val ArrowsImagePath = "resources/images/arrows.png"
-  private val LogoImagePath = "resources/images/alt-logo.png"
+  private val LogoImagePath = "resources/images/logo.png"
 
   private var BlockList: IndexedSeq[Node] = null
   private var MainButton: Circle = null
