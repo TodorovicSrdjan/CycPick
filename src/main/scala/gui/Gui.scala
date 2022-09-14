@@ -292,9 +292,14 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     grid
   }
 
+  private def returnFocus(): Unit = {
+    engine.returnFocus()
+    app.stage.show()
+  }
+
   private def makeMove(boxIndex: Int): Boolean = {
     if (engine.isPicking() && app.stage.isFocused)
-      engine.returnFocus()
+      returnFocus()
 
     var valid = true
     val outcome = engine.makeMove(boxIndex)
