@@ -59,8 +59,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
   private val LabelMaxChars = 6
   private val OptionGroupsOpacity = 0.35
   private val ArrowsImagePath = "resources/images/arrows.png"
-
-  private val Rand: Random = new Random
+  private val LogoImagePath = "resources/images/alt-logo.png"
 
   private var BlockList: IndexedSeq[Node] = null
   private var MainButton: Circle = null
@@ -80,6 +79,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
       alwaysOnTop = true
     }
     app.stage.centerOnScreen()
+    app.stage.icons += new Image(new File(LogoImagePath).toURI.toString)
   }
 
   private def createScene(): Scene = {
