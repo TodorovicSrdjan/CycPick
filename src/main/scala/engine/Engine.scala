@@ -20,11 +20,14 @@
 
 package engine
 
+import engine.choice.Choice
+
 import javafx.stage.Window
 
 import scala.collection.immutable.ListMap
 import java.awt.Robot
 import java.awt.event.KeyEvent
+import java.nio.file.{Paths, Files}
 
 sealed trait MoveDirection
 case object Clockwise extends MoveDirection
@@ -45,10 +48,12 @@ class Engine {
   private var previousIndex = 0
   private var choiceStartIndex = 0
   private var choiceEndIndex = 0
+  private var shiftPressed = false
 
   private var _isPicking = false
   private var moveDirection: Option[MoveDirection] = None
   private val robot = new Robot
+  private var currentChoice = loadMainChoice()
 
   def isPicking(): Boolean = {
     if(_isPicking) println("Picking...")
@@ -58,18 +63,15 @@ class Engine {
     _isPicking = isPicking
   }
 
-def choices: ListMap[(Int, Int, MoveDirection), String] = ListMap(
-    (1, 1, Clockwise)->"a", (1, 2, Clockwise)->"b", (1, 3, Clockwise)->"c", (1, 4, Clockwise)->"d",
-    (2, 1, Clockwise)->"e", (2, 2, Clockwise)->"f", (2, 3, Clockwise)->"g", (2, 4, Clockwise)->"i",
-    (3, 1, Clockwise)->"j", (3, 2, Clockwise)->"k", (3, 3, Clockwise)->"l", (3, 4, Clockwise)->"m",
-    (4, 1, Clockwise)->"n", (4, 2, Clockwise)->"o", (4, 3, Clockwise)->"p", (4, 4, Clockwise)->"q",
-    (1, 1, Counterclockwise) -> "r", (1, 2, Counterclockwise) -> "s", (1, 3, Counterclockwise) -> "t",
-    (1, 4, Counterclockwise) -> "u", (2, 1, Counterclockwise) -> "v", (2, 2, Counterclockwise) -> "w",
-    (2, 3, Counterclockwise) -> "x", (2, 4, Counterclockwise) -> "y", (3, 1, Counterclockwise) -> "z",
-    (3, 2, Counterclockwise) -> "space", (3, 3, Counterclockwise) -> ".", (3, 4, Counterclockwise) -> "⌫",
-    (4, 1, Counterclockwise) -> "?", (4, 2, Counterclockwise) -> ",", (4, 3, Counterclockwise) -> "↵",
-    (4, 4, Counterclockwise) -> "h"
-  )
+  def choiceLabels(from: Int, direction: MoveDirection): List[String] = {
+    val groupNumber = findGroupNumber(from, direction)
+    currentChoice.subchoiceGroups.get.apply(groupNumber-1).choices.map(c=>c.label)
+  }
+
+  private def convertMoveToChoice(from: Int, to: Int, direction: MoveDirection): Choice = {
+    val groupNumber = findGroupNumber(from, direction)
+    currentChoice.subchoiceGroups.get.apply(groupNumber-1).choices.apply(to-1)
+  }
 
   def makeMove(index: Int): MoveAttemptOutcome = {
     var valid = false
@@ -96,27 +98,32 @@ def choices: ListMap[(Int, Int, MoveDirection), String] = ListMap(
         choiceEndIndex = currentIndex
         println(s"$choiceStartIndex, $choiceEndIndex, ${moveDirection.get}")
 
-        val choice: String = choices(choiceStartIndex, choiceEndIndex, moveDirection.get)
+        val choice = convertMoveToChoice(choiceStartIndex, choiceEndIndex, moveDirection.get)
 
-        choice match {
+        choice.content match {
           case "space" => {
             robot.keyPress(KeyEvent.VK_SPACE)
             robot.keyRelease(KeyEvent.VK_SPACE)
           }
-          case "⌫" => {
+          case "backspace" => {
             robot.keyPress(KeyEvent.VK_BACK_SPACE)
             robot.keyRelease(KeyEvent.VK_BACK_SPACE)
           }
-          case "↵" => {
-            robot.keyPress(KeyEvent.VK_SHIFT)
-            robot.keyPress(KeyEvent.VK_ENTER)
-            robot.keyRelease(KeyEvent.VK_ENTER)
-            robot.keyRelease(KeyEvent.VK_SHIFT)
-            typeString("- Written using CycPick")
+          case "enter" => {
             robot.keyPress(KeyEvent.VK_ENTER)
             robot.keyRelease(KeyEvent.VK_ENTER)
           }
-          case _ => typeString(choice)
+          case "shift" => shiftPressed = !shiftPressed
+          case _ => {
+            if (!shiftPressed)
+              typeString(choice.content)
+            else {
+              robot.keyPress(KeyEvent.VK_SHIFT)
+              typeString(choice.content)
+              robot.keyRelease(KeyEvent.VK_SHIFT)
+              shiftPressed = !shiftPressed
+            }
+          }
         }
 
         resetChoise()
@@ -131,7 +138,14 @@ def choices: ListMap[(Int, Int, MoveDirection), String] = ListMap(
     moveAttemptOutcome
   }
 
-  def getCurrentIndex(): Int = currentIndex
+  private def loadMainChoice(): Choice = {
+    if (Files.exists(Paths.get(Choice.defaultSavePath)))
+      Choice.loadFromFile()._2
+    else {
+      Choice.saveToFile(Choice.defaultLayout)
+      Choice.defaultLayout._2
+    }
+  }
 
   def resetChoise(): Unit = {
     moveDirection = None
@@ -140,6 +154,7 @@ def choices: ListMap[(Int, Int, MoveDirection), String] = ListMap(
   }
 
   def resetPicking(): Unit = {
+    shiftPressed = false
     moveDirection = None
     isPicking = false
     previousIndex = 0
@@ -156,6 +171,21 @@ def choices: ListMap[(Int, Int, MoveDirection), String] = ListMap(
     robot.delay(30) //set the delay
     robot.keyRelease(KeyEvent.VK_ALT)
     robot.keyRelease(KeyEvent.VK_TAB)
+  }
+
+  private def findGroupNumber(blockNumber: Int, direction: MoveDirection): Int = {
+    (blockNumber, direction) match {
+      case (1, Counterclockwise) => 1
+      case (1, Clockwise) => 2
+      case (2, Counterclockwise) => 3
+      case (2, Clockwise) => 4
+      case (3, Counterclockwise) => 5
+      case (3, Clockwise) => 6
+      case (4, Counterclockwise) => 7
+      case (4, Clockwise) => 8
+      case _ =>
+        throw new IllegalStateException(s"Unknown combination (blockNumber, direction): ($direction, $direction)")
+    }
   }
 
   // snipped from https://alvinalexander.com/scala/scala-java-robot-class-example-boulder-colorado/

@@ -32,7 +32,7 @@ lazy val root = project
 
         libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test,
         libraryDependencies += "org.scalafx" %% "scalafx" % "18.0.1-R28",
-
+        libraryDependencies += "org.json4s" %% "json4s-jackson" % "4.0.5",
         //assembly / mainClass := Some("com.cycpick.Main"),
         assembly / assemblyJarName  := s"${name.value}-${version.value}.jar",
         assembly / assemblyMergeStrategy := {

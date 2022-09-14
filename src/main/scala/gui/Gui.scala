@@ -126,6 +126,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     // Create layer for choice groups
     ChoiceGroups = new Group(createChoiceGroupsGrid())
     ChoiceGroups.setMouseTransparent(true)
+    updateChoiceLabels()
 
     // Create layer for available choices in selected group
     val selectedChoicesGrid = new Group(createGridForSelectedChoiceGroup())
@@ -175,8 +176,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
         else ListVerBoxes(from - 1)
 
         for (to <- 1 to numOfBlocks) {
-          val lblText = ellipsisIfNecessary(engine.choices(from, to, direction))
-          val lbl = new Label(lblText)
+          val lbl = new Label()
 
           lbl.setWrapText(true)
           lbl.setMaxWidth(Double.MaxValue)
@@ -379,5 +379,18 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
 
     grid.getColumnConstraints.setAll(c1, c2)
     grid.getRowConstraints.setAll(r1, r2)
+  }
+
+  private def updateChoiceLabels(): Unit = {
+    for(direction <- List(Clockwise, Counterclockwise)) {
+      for (i <- 1 to numOfBlocks) {
+        val labelStrings = engine.choiceLabels(i, direction)
+        val box = if getGroupOrientation(i, direction) == Horizontal then ListHorBoxes(i-1) else ListVerBoxes(i-1)
+        val labels = box.children.map(node => node.asInstanceOf[JLabel])
+
+        for(j <- labels.indices)
+          labels(j).text = labelStrings(j)
+      }
+    }
   }
 }

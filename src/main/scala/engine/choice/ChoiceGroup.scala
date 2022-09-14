@@ -18,31 +18,10 @@
     Contact: tsrdjan@pm.me
 */
 
-package engine
+package engine.choice
 
-import engine.NodeType
+import engine.choice.Choice
 
-object NodeType extends Enumeration {
-  type NodeType = Value
-  val OneTimeUse, Regular = Value
-}
+class ChoiceGroup(val groupNumber: Int, val choices: List[Choice]) {
 
-class Node(val label: String, val nodeType: NodeType.NodeType, val parent: Node, val isLeaf: Boolean = true) {
-  var content = null
-  var options = null
-    /*
-      def this(label: String, nodeType: NodeType, parent: Node) {
-        this(label, nodeType, parent)if (!isLeaf) {
-      options = createNodeOptions()
-    }
-      }*/
-
-
-  private def createNodeOptions(): List[Node] = {
-    List()
-  }
-
-  def unload(): Unit = {
-
-  }
 }
