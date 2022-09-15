@@ -21,6 +21,7 @@
 package gui
 
 import engine.{ChoiceSelected, Clockwise, Counterclockwise, Engine, MoveAborted, MoveDirection, ChoiceGroupSelected}
+
 import scalafx.stage.Screen
 import scalafx.scene.transform.{Rotate, Translate}
 import scalafx.scene.image.{Image, ImageView}
@@ -33,8 +34,10 @@ import scalafx.scene.control.*
 import scalafx.scene.layout.*
 import scalafx.scene.paint.*
 import scalafx.scene.shape.*
+import scalafx.scene.input.{MouseEvent, MouseButton}
 import scalafx.Includes.*
 import scalafx.geometry.{Insets, Pos, Rectangle2D}
+
 import scala.util.*
 import scala.collection.mutable.ListBuffer
 
@@ -97,9 +100,11 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
       fill = InactiveCircleColor
       effect = new DropShadow(2, 3, 3, Color.Black)
       onMouseEntered = () => if engine.isPicking() then makeMove(0)
-      onMouseReleased = () => {
-        engine.isPicking = !engine.isPicking()
+      onMouseReleased = (e: MouseEvent) => {
+        if(e.button == MouseButton.Primary) {
+           engine.isPicking = !engine.isPicking() // TODO move to engine
         fill = if (engine.isPicking()) ActiveCircleColor else InactiveCircleColor
+      }
       }
     }
 
