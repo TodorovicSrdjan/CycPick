@@ -345,7 +345,6 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     if (valid)
       MainButton.fill = ActiveCircleColor
     else {
-      MainButton.fill = InactiveCircleColor
       resetPicking()
     }
 
@@ -356,6 +355,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     ChoiceGroups.opacity = 1
     ChoicesOfSelectedGroup.foreach(o => o.text = "")
     ArrowsImage.get.visible = false
+    MainButton.fill = InactiveCircleColor
   }
 
   private def getGroupOrientation(boxNumber: Int, direction: MoveDirection): GroupOrientation = {
