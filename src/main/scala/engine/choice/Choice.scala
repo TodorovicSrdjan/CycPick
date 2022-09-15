@@ -20,22 +20,19 @@
 
 package engine.choice
 
-import engine.choice.{ChoiceType, ChoiceGroup}
+import engine.choice.ChoiceType._
+import engine.choice.{ChoiceGroup, ChoiceType, ChoiceTypeSerializer}
 import org.json4s.*
-import org.json4s.FieldSerializer
 import org.json4s.jackson.Serialization
 import org.json4s.jackson.Serialization.{read, writePretty}
-
 import java.io.{File, PrintWriter}
 import scala.io.Source
 
-
-
-implicit val formats: Formats = DefaultFormats + new ChoiceGroupSerializer
+implicit val formats: Formats = DefaultFormats + new ChoiceGroupSerializer + new ChoiceTypeSerializer
 
 object ChoiceType extends Enumeration {
   type ChoiceType = Value
-  val OneTimeUse, Regular = Value
+  val OneTimeUse, TextWriter, ChoiceWithSubchoices  = Value
 }
 
 object Choice {
@@ -47,7 +44,7 @@ object Choice {
   }
 
   def defaultLayout: Tuple2[String, Choice] = Tuple2("0",
-    new Choice(0, "keyboard", "", Option(List(
+    new Choice(0, "keyboard", "", ChoiceWithSubchoices, Option(List(
       new ChoiceGroup(1, List(
         new Choice(1, "x", "x"),
         new Choice(2, "m", "m"),
@@ -117,7 +114,8 @@ class Choice(
   val placeInGroup: Int,
   val label: String,
   val content: String,
-  val subchoiceGroups: Option[List[ChoiceGroup]] = None
+  val choiceType: ChoiceType = TextWriter,
+  val subchoiceGroups: Option[List[ChoiceGroup]] = None // TODO Change to Map
   ) {
 
   private def createChoiceOptions(): List[Choice] = {

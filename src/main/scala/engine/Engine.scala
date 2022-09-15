@@ -20,7 +20,7 @@
 
 package engine
 
-import engine.choice.Choice
+import engine.choice.{Choice, ChoiceType}
 
 import javafx.stage.Window
 
@@ -36,14 +36,18 @@ case object Counterclockwise extends MoveDirection
 sealed trait MoveAttemptOutcome
 case object BlockEntered extends MoveAttemptOutcome
 case class ChoiceGroupSelected(from: Int, direction: MoveDirection) extends MoveAttemptOutcome
-case object ChoiceSelected extends MoveAttemptOutcome
+case object ChoiceProcessed extends MoveAttemptOutcome
 case object MoveAborted extends MoveAttemptOutcome
+case object MoveIgnored extends MoveAttemptOutcome
+case object LayoutChanged extends MoveAttemptOutcome
 
 
 class Engine {
   import engine.MoveDirection
   import engine.MoveAttemptOutcome
 
+  private val missingChoiceStringRepr = ""
+  private val numOfChoicesPerGroup = 4
   private var currentIndex = 0
   private var previousIndex = 0
   private var choiceStartIndex = 0
@@ -54,6 +58,7 @@ class Engine {
   private var moveDirection: Option[MoveDirection] = None
   private val robot = new Robot
   private var currentChoice = loadMainChoice()
+  private var previousChoice: Option[Choice] = None
 
   def isPicking(): Boolean = {
     if(_isPicking) println("Picking...")
@@ -111,17 +116,22 @@ class Engine {
           case _ => Option(Counterclockwise)
         }
 
-        moveAttemptOutcome = ChoiceGroupSelected(currentIndex, moveDirection.get)
+        val groupNumber = findGroupNumber(currentIndex, moveDirection.get)
+        moveAttemptOutcome = if (checkIfGroupExists(groupNumber)) {
+          ChoiceGroupSelected(currentIndex, moveDirection.get)
+        }
+        else {
+          resetPicking()
+          MoveAborted
+        }
       }
       else if (index == 0) {
         choiceEndIndex = currentIndex
         println(s"$choiceStartIndex, $choiceEndIndex, ${moveDirection.get}")
 
-        val choice = convertMoveToChoice(choiceStartIndex, choiceEndIndex, moveDirection.get).get
-
-        processChoice(choice)
-        resetChoise()
-        moveAttemptOutcome = ChoiceSelected
+        val choice = convertMoveToChoice(choiceStartIndex, choiceEndIndex, moveDirection.get)
+        moveAttemptOutcome = processChoice(choice)
+        resetChoice()
       }
       previousIndex = currentIndex
       currentIndex = index
@@ -131,9 +141,17 @@ class Engine {
 
     moveAttemptOutcome
   }
-  
-  private def processChoice(choice: Choice): Unit = {
-        choice.content match {
+
+  private def processChoice(choice: Option[Choice]): MoveAttemptOutcome = {
+    choice match {
+      case None => MoveIgnored
+      case Some(c) if c.choiceType == ChoiceType.ChoiceWithSubchoices => {
+        previousChoice = Some(currentChoice)
+        currentChoice = choice.get
+        LayoutChanged
+      }
+      case Some(c) => {
+        c.content match {
           case "space" => {
             robot.keyPress(KeyEvent.VK_SPACE)
             robot.keyRelease(KeyEvent.VK_SPACE)
@@ -149,15 +167,23 @@ class Engine {
           case "shift" => shiftPressed = !shiftPressed
           case _ => {
             if (!shiftPressed)
-              typeString(choice.content)
+              typeString(c.content)
             else {
               robot.keyPress(KeyEvent.VK_SHIFT)
-              typeString(choice.content)
+              typeString(c.content)
               robot.keyRelease(KeyEvent.VK_SHIFT)
               shiftPressed = !shiftPressed
             }
           }
         }
+
+        ChoiceProcessed
+      }
+    }
+  }
+
+  private def checkIfGroupExists(groupNumber: Int): Boolean = {
+    currentChoice.subchoiceGroups.get.exists(_.groupNumber == groupNumber)
   }
 
   private def loadMainChoice(): Choice = {
@@ -169,7 +195,7 @@ class Engine {
     }
   }
 
-  def resetChoise(): Unit = {
+  def resetChoice(): Unit = {
     moveDirection = None
     choiceStartIndex = 0
     choiceEndIndex = 0
@@ -221,5 +247,11 @@ class Engine {
       robot.keyPress(code)
       robot.keyRelease(code)
     }
+  }
+
+  def returnPreviousLayout(): Unit = {
+    resetPicking()
+    currentChoice = previousChoice.getOrElse(currentChoice)
+    previousChoice = None
   }
 }

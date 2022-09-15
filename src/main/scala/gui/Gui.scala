@@ -20,7 +20,8 @@
 
 package gui
 
-import engine.{ChoiceSelected, Clockwise, Counterclockwise, Engine, MoveAborted, MoveDirection, ChoiceGroupSelected}
+import engine.{Clockwise, Counterclockwise, Engine, MoveDirection}
+import engine.{ChoiceGroupSelected, ChoiceProcessed, LayoutChanged, MoveAborted}
 
 import scalafx.stage.Screen
 import scalafx.scene.transform.{Rotate, Translate}
@@ -103,8 +104,11 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
       onMouseReleased = (e: MouseEvent) => {
         if(e.button == MouseButton.Primary) {
            engine.isPicking = !engine.isPicking() // TODO move to engine
-        fill = if (engine.isPicking()) ActiveCircleColor else InactiveCircleColor
-      }
+            fill = if (engine.isPicking()) ActiveCircleColor else InactiveCircleColor
+          }
+        else if(e.button == MouseButton.Secondary){
+          returnPreviousLayout()
+        }
       }
     }
 
@@ -118,6 +122,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
         strokeWidth = 0.5
         stroke = Color.rgb(0, 71, 51)
         onMouseEntered = () => makeMove(i+1)
+        onMouseReleased = (e: MouseEvent) => if e.button == MouseButton.Secondary then returnPreviousLayout()
       }.asInstanceOf[Node]
 
     // Create block grid
@@ -298,7 +303,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
 
   private def returnFocus(): Unit = {
     engine.returnFocus()
-    app.stage.show()
+    app.stage.show() // TODO rethink since fix did not work
   }
 
   private def makeMove(boxIndex: Int): Boolean = {
@@ -338,7 +343,11 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
           ChoicesOfSelectedGroup(i).text = ellipsisIfNecessary(auxiliaryChoiceLabels(i).text.value, LabelMaxChars+11)
         }
       }
-      case ChoiceSelected => resetPicking()
+      case ChoiceProcessed => resetPicking()
+      case LayoutChanged => {
+        updateChoiceLabels()
+        resetPicking()
+      }
       case _ => ()
     }
 
@@ -349,6 +358,12 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     }
 
     valid
+  }
+
+  private def returnPreviousLayout(): Unit = {
+    resetPicking()
+    engine.returnPreviousLayout()
+    updateChoiceLabels()
   }
 
   private def resetPicking(): Unit = {
