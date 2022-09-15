@@ -65,12 +65,31 @@ class Engine {
 
   def choiceLabels(from: Int, direction: MoveDirection): List[String] = {
     val groupNumber = findGroupNumber(from, direction)
-    currentChoice.subchoiceGroups.get.apply(groupNumber-1).choices.map(c=>c.label)
+    val choices = currentChoice.subchoiceGroups.get
+      .find(_.groupNumber == groupNumber)
+      .map(_.choices)
+
+    val labels: IndexedSeq[String] = (1 to numOfChoicesPerGroup).flatMap(i =>
+      choices.flatMap(_.find(_.placeInGroup == i)
+        .map(_.label)
+        .orElse(Option(missingChoiceStringRepr))
+    ))
+
+    if (labels.nonEmpty)
+      labels.toList
+    else
+      List.fill(numOfChoicesPerGroup)(missingChoiceStringRepr)
+
+    
   }
 
-  private def convertMoveToChoice(from: Int, to: Int, direction: MoveDirection): Choice = {
+  private def convertMoveToChoice(from: Int, to: Int, direction: MoveDirection): Option[Choice] = {
     val groupNumber = findGroupNumber(from, direction)
-    currentChoice.subchoiceGroups.get.apply(groupNumber-1).choices.apply(to-1)
+    val choices = currentChoice.subchoiceGroups.get
+      .find(_.groupNumber == groupNumber)
+      .map(_.choices)
+
+    choices.flatMap(_.find(_.placeInGroup == to))
   }
 
   def makeMove(index: Int): MoveAttemptOutcome = {
@@ -98,7 +117,7 @@ class Engine {
         choiceEndIndex = currentIndex
         println(s"$choiceStartIndex, $choiceEndIndex, ${moveDirection.get}")
 
-        val choice = convertMoveToChoice(choiceStartIndex, choiceEndIndex, moveDirection.get)
+        val choice = convertMoveToChoice(choiceStartIndex, choiceEndIndex, moveDirection.get).get
 
         processChoice(choice)
         resetChoise()
