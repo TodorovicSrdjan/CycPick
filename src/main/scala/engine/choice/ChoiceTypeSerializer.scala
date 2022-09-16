@@ -6,8 +6,7 @@ import org.json4s.jackson.Serialization.{read, writePretty}
 import org.json4s.{CustomSerializer, JObject, JString, JField}
 
 class ChoiceTypeSerializer extends CustomSerializer[ChoiceType](format => ( {
-  case JObject(
-  JField("type", JString(ct)) :: Nil) =>
+  case JString(ct) =>
     val choiceType = ChoiceType.withName(ct)
     choiceType match {
       case ChoiceType.TextWriter => ChoiceType.TextWriter
@@ -16,10 +15,7 @@ class ChoiceTypeSerializer extends CustomSerializer[ChoiceType](format => ( {
       case x => throw new Exception(s"Invalid value $x for choice type")
     }
 }, {
-  case choiceType: ChoiceType =>
-    JObject(
-      JField("type", JString(choiceType.toString)) :: Nil
-    )
+  case choiceType: ChoiceType => JString(choiceType.toString)
 }
 ))
 
