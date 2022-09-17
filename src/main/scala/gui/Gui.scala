@@ -182,24 +182,15 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
       for (direction <- List(Clockwise, Counterclockwise)) {
         val orient = getGroupOrientation(from, direction)
         val box = if orient == Horizontal
-        then ListHorBoxes(from - 1)
-        else ListVerBoxes(from - 1)
+          then ListHorBoxes(from - 1)
+          else ListVerBoxes(from - 1)
 
         for (to <- 1 to numOfBlocks) {
           val lbl = new Label()
-
           lbl.setWrapText(true)
           lbl.setMaxWidth(Double.MaxValue)
-
           lbl.style = s"-fx-text-fill: #c4fcf0; -fx-padding: 1"
-
-          // Align choice text closer to the edge of the box
-          lbl.alignment = Pos.Center /*(from, orient) match {
-            case (i, Vertical) if i == 1 || i == 4 => Pos.CenterRight
-            case (i, Vertical) if i == 2 || i == 3 => Pos.CenterLeft
-            case _ => Pos.Center
-          }*/
-
+          lbl.alignment = Pos.Center
           box.children += lbl
         }
       }

@@ -21,7 +21,6 @@
 package engine
 
 import engine.choice.{Choice, ChoiceType}
-
 import javafx.stage.Window
 
 import scala.collection.immutable.ListMap
@@ -84,8 +83,6 @@ class Engine {
       labels.toList
     else
       List.fill(numOfChoicesPerGroup)(missingChoiceStringRepr)
-
-    
   }
 
   private def convertMoveToChoice(from: Int, to: Int, direction: MoveDirection): Option[Choice] = {
@@ -235,7 +232,7 @@ class Engine {
     }
   }
 
-  // snipped from https://alvinalexander.com/scala/scala-java-robot-class-example-boulder-colorado/
+
   private def typeString(s: String) = {
     val bytes = s.getBytes
     for (b <- bytes) {
