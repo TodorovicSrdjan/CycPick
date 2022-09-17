@@ -57,8 +57,8 @@ class Engine {
   private var _isPicking = false
   private var moveDirection: Option[MoveDirection] = None
   private val robot = new Robot
-  private var currentChoice = loadMainChoice()
-  private var previousChoice: Option[Choice] = None
+  private val rootChoice = loadMainChoice()
+  private var currentChoice = rootChoice
 
   def isPicking(): Boolean = {
     if(_isPicking) println("Picking...")
@@ -146,8 +146,7 @@ class Engine {
     choice match {
       case None => MoveIgnored
       case Some(c) if c.choiceType == ChoiceType.ChoiceWithSubchoices => {
-        previousChoice = Some(currentChoice)
-        currentChoice = choice.get
+        currentChoice = choice.getOrElse(rootChoice)
         LayoutChanged
       }
       case Some(c) => {
@@ -249,9 +248,32 @@ class Engine {
     }
   }
 
+  private def ancestorChoice(choice: Choice, startingChoice: Choice = rootChoice): Option[Choice] = {
+    choice match {
+      case c if c == startingChoice => None
+      case c =>
+        val choicesOnThisLevel = for {
+          groups <- startingChoice.subchoiceGroups
+          group <- Option(groups)
+          choices <- Option(group.flatMap(_.choices))
+        } yield choices
+
+        if (choicesOnThisLevel.get.contains(c))
+          Option(startingChoice)
+        else {
+          var found: Option[Choice] = None
+          choicesOnThisLevel.foreach(_.foreach(x=> {
+            found =  if found.isEmpty then found else ancestorChoice(c, x)
+          }))
+
+          found
+        }
+    }
+  }
+
+
   def returnPreviousLayout(): Unit = {
     resetPicking()
-    currentChoice = previousChoice.getOrElse(currentChoice)
-    previousChoice = None
+    currentChoice = ancestorChoice(currentChoice).getOrElse(currentChoice)
   }
 }
