@@ -61,8 +61,8 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
   private val LabelGridGap = 25
   private val LabelMaxChars = 6
   private val ChoiceGroupsOpacity = 0.35
-  private val ArrowsImagePath = "resources/images/arrows.png"
-  private val LogoImagePath = "resources/images/logo.png"
+  private val ArrowsImagePath = "/images/arrows.png"
+  private val LogoImagePath = "/images/logo.png"
 
   private var BlockList: IndexedSeq[Node] = null
   private var MainButton: Circle = null
@@ -82,7 +82,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
       alwaysOnTop = true
     }
     app.stage.centerOnScreen()
-    app.stage.icons += new Image(new File(LogoImagePath).toURI.toString)
+    app.stage.icons += new Image(classOf[Gui].getResourceAsStream(LogoImagePath)) //new Image(new File(LogoImagePath).toURI.toString)
   }
 
   private def createScene(): Scene = {
@@ -143,7 +143,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     selectedChoicesGrid.setMouseTransparent(true)
 
     // Create layer for direction indicators
-    ArrowsImage = Option(new ImageView(new Image(new File(ArrowsImagePath).toURI.toString)))
+    ArrowsImage = Option(new ImageView(new Image(classOf[Gui].getResourceAsStream(ArrowsImagePath))))
     ArrowsImage.get.setMouseTransparent(true)
     ArrowsImage.get.visible = false
 
