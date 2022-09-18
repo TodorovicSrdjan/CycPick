@@ -304,7 +304,7 @@ class Gui(app: JFXApp3, engine: Engine, appName: String, numOfBlocks: Int = 4) {
     var valid = true
     val outcome = engine.makeMove(boxIndex)
 
-    println(outcome)
+    // TODO Set logging (DEBUG lvl) println(outcome)
 
     outcome match {
       case MoveAborted => valid = false

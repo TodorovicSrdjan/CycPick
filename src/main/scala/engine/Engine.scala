@@ -60,7 +60,7 @@ class Engine {
   private var currentChoice = rootChoice
 
   def isPicking(): Boolean = {
-    if(_isPicking) println("Picking...")
+    // TODO Set logging (DEBUG lvl) if(_isPicking) println("Picking...")
     _isPicking
   }
   def isPicking_=(isPicking: Boolean) = {
@@ -98,7 +98,7 @@ class Engine {
     var valid = false
     var moveAttemptOutcome: MoveAttemptOutcome = MoveAborted
 
-    println(s"\nTry: move from $currentIndex (it's previous is $previousIndex) to $index (${moveDirection.toString})")
+    // TODO Set logging (DEBUG lvl) println(s"\nTry: move from $currentIndex (it's previous is $previousIndex) to $index (${moveDirection.toString})")
 
     if (!isPicking() || previousIndex == index && currentIndex != 0 || index == 0 && previousIndex == 0)
       resetPicking()
@@ -124,7 +124,7 @@ class Engine {
       }
       else if (index == 0) {
         choiceEndIndex = currentIndex
-        println(s"$choiceStartIndex, $choiceEndIndex, ${moveDirection.get}")
+        // TODO Set logging (DEBUG lvl) println(s"$choiceStartIndex, $choiceEndIndex, ${moveDirection.get}")
 
         val choice = convertMoveToChoice(choiceStartIndex, choiceEndIndex, moveDirection.get)
         moveAttemptOutcome = processChoice(choice)
@@ -134,7 +134,7 @@ class Engine {
       currentIndex = index
     }
 
-    println(s"\tmove is%s valid".format(if valid  then "" else " not"))
+    // TODO Set logging (DEBUG lvl) println(s"\tmove is%s valid".format(if valid  then "" else " not"))
 
     moveAttemptOutcome
   }
