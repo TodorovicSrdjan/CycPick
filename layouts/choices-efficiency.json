@@ -1,0 +1,266 @@
+{
+  "0" : {
+    "placeInGroup" : 0,
+    "label" : "keyboard",
+    "content" : "",
+    "choiceType" : "ChoiceWithSubchoices",
+    "subchoiceGroups" : [ {
+      "groupNumber" : 1,
+      "choices" : [ {
+        "placeInGroup" : 1,
+        "label" : "x",
+        "content" : "x",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 2,
+        "label" : "m",
+        "content" : "m",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 3,
+        "label" : "r",
+        "content" : "r",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 4,
+        "label" : "o",
+        "content" : "o",
+        "choiceType" : "TextWriter"
+      } ]
+    }, {
+      "groupNumber" : 2,
+      "choices" : [ {
+        "placeInGroup" : 1,
+        "label" : "y",
+        "content" : "y",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 2,
+        "label" : "i",
+        "content" : "i",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 3,
+        "label" : "t",
+        "content" : "t",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 4,
+        "label" : "c",
+        "content" : "c",
+        "choiceType" : "TextWriter"
+      } ]
+    }, {
+      "groupNumber" : 3,
+      "choices" : [ {
+        "placeInGroup" : 1,
+        "label" : "n",
+        "content" : "n",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 2,
+        "label" : "w",
+        "content" : "w",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 3,
+        "label" : "k",
+        "content" : "k",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 4,
+        "label" : "d",
+        "content" : "d",
+        "choiceType" : "TextWriter"
+      } ]
+    }, {
+      "groupNumber" : 4,
+      "choices" : [ {
+        "placeInGroup" : 1,
+        "label" : "v",
+        "content" : "v",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 2,
+        "label" : "q",
+        "content" : "q",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 3,
+        "label" : "e",
+        "content" : "e",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 4,
+        "label" : "j",
+        "content" : "j",
+        "choiceType" : "TextWriter"
+      } ]
+    }, {
+      "groupNumber" : 5,
+      "choices" : [ {
+        "placeInGroup" : 1,
+        "label" : "l",
+        "content" : "l",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 2,
+        "label" : "s",
+        "content" : "s",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 3,
+        "label" : "⇧",
+        "content" : "shift",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 4,
+        "label" : "b",
+        "content" : "b",
+        "choiceType" : "TextWriter"
+      } ]
+    }, {
+      "groupNumber" : 6,
+      "choices" : [ {
+        "placeInGroup" : 1,
+        "label" : "f",
+        "content" : "f",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 2,
+        "label" : "p",
+        "content" : "p",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 3,
+        "label" : ".",
+        "content" : ". ",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 4,
+        "label" : "⌫",
+        "content" : "backspace",
+        "choiceType" : "TextWriter"
+      } ]
+    }, {
+      "groupNumber" : 7,
+      "choices" : [ {
+        "placeInGroup" : 1,
+        "label" : "z",
+        "content" : "z",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 2,
+        "label" : "h",
+        "content" : "h",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 3,
+        "label" : "space",
+        "content" : " ",
+        "choiceType" : "TextWriter"
+      }, {
+        "placeInGroup" : 4,
+        "label" : "↵",
+        "content" : "enter",
+        "choiceType" : "TextWriter"
+      } ]
+    }, {
+      "groupNumber": 8,
+      "choices": [ {
+          "placeInGroup": 1,
+          "label": "a",
+          "content": "a",
+          "choiceType": "TextWriter"
+        }, {
+          "placeInGroup": 2,
+          "label": "u",
+          "content": "u",
+          "choiceType": "TextWriter"
+        }, {
+          "placeInGroup": 3,
+          "label": "g",
+          "content": "g",
+          "choiceType": "TextWriter"
+        }, {
+          "placeInGroup": 4,
+          "label": "\uD83D\uDD22",
+          "content": "",
+          "choiceType": "ChoiceWithSubchoices",
+          "subchoiceGroups": [ {
+            "groupNumber" : 1,
+            "choices" : [ {
+              "placeInGroup" : 2,
+              "label" : "0",
+              "content" : "0",
+              "choiceType" : "TextWriter"
+            }, {
+              "placeInGroup" : 3,
+              "label" : "1",
+              "content" : "1",
+              "choiceType" : "TextWriter"
+            }, {
+              "placeInGroup" : 4,
+              "label" : "2",
+              "content" : "2",
+              "choiceType" : "TextWriter"
+            } ]
+          }, {
+            "groupNumber" : 4,
+            "choices" : [ {
+              "placeInGroup" : 1,
+              "label" : "3",
+              "content" : "3",
+              "choiceType" : "TextWriter"
+            }, {
+              "placeInGroup" : 3,
+              "label" : "4",
+              "content" : "4",
+              "choiceType" : "TextWriter"
+            }, {
+              "placeInGroup" : 4,
+              "label" : "5",
+              "content" : "5",
+              "choiceType" : "TextWriter"
+            } ]
+          }, {
+            "groupNumber" : 5,
+            "choices" : [ {
+              "placeInGroup" : 1,
+              "label" : "9",
+              "content" : "9",
+              "choiceType" : "TextWriter"
+            }, {
+              "placeInGroup" : 2,
+              "label" : "↵",
+              "content" : "enter",
+              "choiceType" : "TextWriter"
+            }, {
+              "placeInGroup" : 4,
+              "label" : "⌫",
+              "content" : "backspace",
+              "choiceType" : "TextWriter"
+            } ]
+          }, {
+            "groupNumber" : 8,
+            "choices" : [ {
+              "placeInGroup" : 1,
+              "label" : "6",
+              "content" : "6",
+              "choiceType" : "TextWriter"
+            }, {
+              "placeInGroup" : 2,
+              "label" : "7",
+              "content" : "7",
+              "choiceType" : "TextWriter"
+            }, {
+              "placeInGroup" : 3,
+              "label" : "8",
+              "content" : "8",
+              "choiceType" : "TextWriter"
+            } ]
+          } ]
+        } ]
+    } ]
+  }
+}
