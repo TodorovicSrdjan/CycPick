@@ -1,6 +1,6 @@
 # CycPick 
 
-CycPick is a desktop program, inspired by 8Vim and other Vim-like tools, whose main idea is to assist you in choosing an option in a set of many options.
+CycPick is a desktop program, inspired by [8Vim](https://github.com/flide/8VIM) and other Vim-like tools, whose main idea is to assist you in choosing an option in a set of many options.
 
 ## Screenshots
 
